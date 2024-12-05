@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/router";
 import {
   fetchTemplates,
@@ -7,13 +7,28 @@ import {
   addTemplate,
 } from "../../utils/api";
 
+interface Template {
+  id: number;
+  teks: string;
+  status: string;
+}
+
 const TemplatesPage = () => {
-  const [templates, setTemplates] = useState<any[]>([]);
+  const [templates, setTemplates] = useState<Template[]>([]);
   const [teks, setTeks] = useState("");
   const [error, setError] = useState("");
   const router = useRouter();
 
   const authKey = typeof window !== "undefined" ? localStorage.getItem("authKey") : null;
+
+  const fetchTemplatesData = useCallback(async () => {
+    try {
+      const { data } = await fetchTemplates(authKey!);
+      setTemplates(data.data);
+    } catch {
+      setError("Gagal memuat template.");
+    }
+  }, [authKey]);
 
   useEffect(() => {
     if (!authKey) {
@@ -21,16 +36,7 @@ const TemplatesPage = () => {
     } else {
       fetchTemplatesData();
     }
-  }, []);
-
-  const fetchTemplatesData = async () => {
-    try {
-      const { data } = await fetchTemplates(authKey!);
-      setTemplates(data.data);
-    } catch {
-      setError("Gagal memuat template.");
-    }
-  };
+  }, [authKey, router, fetchTemplatesData]);
 
   const handleDelete = async (id: number) => {
     await deleteTemplate(id, authKey!);
