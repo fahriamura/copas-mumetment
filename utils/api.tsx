@@ -1,37 +1,50 @@
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 
+// Define types for the API responses (adjust based on the expected API response structure)
+interface Template {
+  id: number;
+  teks: string;
+  status: string;
+}
+
+// Initialize Axios instance
 const api = axios.create({
   baseURL: "https://fahriamura-copas.vercel.app/api",
 });
 
-export const loginAdmin = async (authKey: string) => {
-    return api.post(
-      "/admin/login", 
-      { authKey },
-      { headers: { "x-auth-key": authKey } } 
-    );
-  };
-  
+// Login Admin function
+export const loginAdmin = async (authKey: string): Promise<AxiosResponse> => {
+  return api.post(
+    "/admin/login", 
+    { authKey },
+    { headers: { "x-auth-key": authKey } }
+  );
+};
 
-export const fetchTemplates = async (authKey: string) => {
+// Fetch templates function
+export const fetchTemplates = async (authKey: string): Promise<AxiosResponse<{ data: Template[] }>> => {
   return api.get("/admin/templates", {
     headers: { "x-auth-key": authKey },
   });
 };
 
-export const addTemplate = async (teks: string, authKey: string) => {
+// Add new template function
+export const addTemplate = async (teks: string, authKey: string): Promise<AxiosResponse> => {
   return api.post(
     "/templates",
-    { teks }
+    { teks },
+    { headers: { "x-auth-key": authKey } }
   );
 };
 
-export const deleteTemplate = async (id: number, authKey: string) => {
+// Delete template function
+export const deleteTemplate = async (id: number, authKey: string): Promise<AxiosResponse> => {
   return api.delete(`/templates/${id}`, {
     headers: { "x-auth-key": authKey },
   });
 };
 
-export const confirmTemplate = async (id: number, authKey: string) => {
+// Confirm template function
+export const confirmTemplate = async (id: number, authKey: string): Promise<AxiosResponse> => {
   return api.put(`/templates/${id}`, {}, { headers: { "x-auth-key": authKey } });
 };
