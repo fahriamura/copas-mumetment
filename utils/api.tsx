@@ -9,7 +9,7 @@ interface Template {
 
 // Initialize Axios instance
 const api = axios.create({
-  baseURL: "https://fahriamura-copas.vercel.app/api/api",
+  baseURL: "https://fahriamura-copas.vercel.app/api",
   withCredentials:true
 });
 
@@ -40,12 +40,12 @@ export const addTemplate = async (teks: string, authKey: string): Promise<AxiosR
 
 // Delete template function
 export const deleteTemplate = async (id: number, authKey: string): Promise<AxiosResponse> => {
-  return api.delete(`/templates/${id}`, {
+  return api.delete(`/templates?id=${id}`, {
     headers: { "x-auth-key": authKey },
   });
 };
 
 // Confirm template function
 export const confirmTemplate = async (id: number, authKey: string): Promise<AxiosResponse> => {
-  return api.put(`/templates/${id}`, {}, { headers: { "x-auth-key": authKey } });
+  return api.put(`/templates?id=${id}`, {}, { headers: { "x-auth-key": authKey } });
 };

@@ -40,7 +40,7 @@ const TemplatesPage = () => {
   // Fetch templates on initial load
   useEffect(() => {
     axios
-      .get("https://fahriamura-copas.vercel.app/api/api/templates")
+      .get("https://fahriamura-copas.vercel.app/api/templates")
       .then((response) => setTemplates(response.data.data))
       .catch((err) => console.error("Error fetching templates:", err));
   }, []);
