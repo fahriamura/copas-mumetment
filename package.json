@@ -6,7 +6,6 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "postinstall": "npm install --force",
     "lint": "next lint"
   },
   "dependencies": {
