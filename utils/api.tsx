@@ -15,7 +15,7 @@ const api = axios.create({
 // Login Admin function
 export const loginAdmin = async (authKey: string): Promise<AxiosResponse> => {
   return api.post(
-    "/fuehfueuehfuhefuhfu", 
+    "/admin/login", 
     { authKey },
     { headers: { "x-auth-key": authKey } }
   );
