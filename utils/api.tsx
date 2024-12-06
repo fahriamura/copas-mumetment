@@ -9,7 +9,7 @@ interface Template {
 
 // Initialize Axios instance
 const api = axios.create({
-  baseURL: "https://fahriamura-copas.vercel.app/api/api",
+  baseURL: "https://fahriamura-copas.vercel.app/api",
 });
 
 // Login Admin function
