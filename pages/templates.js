@@ -21,9 +21,8 @@ import {
   Fab,
 } from "@mui/material";
 import { CopyAll, Add } from "@mui/icons-material";
-import { makeStyles } from "@mui/styles";
 import './cards.css';
-
+import './headers.css';
 const TemplatesPage = () => {
     const [templates, setTemplates] = useState([]);
     const [selectedTemplate, setSelectedTemplate] = useState("");
@@ -39,7 +38,7 @@ const TemplatesPage = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-  // Fetch templates on initial load
+ 
   useEffect(() => {
     axios
       .get("https://fahriamura-copas.vercel.app/api/templates")
@@ -54,6 +53,64 @@ const TemplatesPage = () => {
     setOpenDrawer(true);
   };
 
+  useEffect(() => {
+      const content = document.querySelector('header .content');
+      const blur = document.querySelector('header .overlay');
+      let wHeight = window.innerHeight;
+
+      window.addEventListener('resize', function() {
+        wHeight = window.innerHeight;
+      });
+
+      window.requestAnimFrame = (function() {
+        return window.requestAnimationFrame ||
+              window.webkitRequestAnimationFrame ||
+              window.mozRequestAnimationFrame ||
+              function(callback) {
+                window.setTimeout(callback, 1000 / 60);
+              };
+      })();
+
+      function Scroller() {
+        this.latestKnownScrollY = 0;
+        this.ticking = false;
+      }
+
+      Scroller.prototype = {
+        init: function() {
+          window.addEventListener('scroll', this.onScroll.bind(this), false);
+          blur.style.backgroundImage = document.querySelector('header:first-of-type').style.backgroundImage;
+        },
+
+        onScroll: function() {
+          this.latestKnownScrollY = window.scrollY;
+          this.requestTick();
+        },
+
+        requestTick: function() {
+          if (!this.ticking) {
+            window.requestAnimFrame(this.update.bind(this));
+          }
+          this.ticking = true;
+        },
+
+        update: function() {
+          const currentScrollY = this.latestKnownScrollY;
+          this.ticking = false;
+
+          const slowScroll = currentScrollY / 2;
+          const blurScroll = currentScrollY * 2;
+          const opaScroll = 1.4 - currentScrollY / 400;
+
+          content.style.transform = `translateY(${slowScroll}px)`;
+          content.style.opacity = opaScroll;
+          blur.style.opacity = blurScroll / wHeight;
+        }
+      };
+
+      const scroller = new Scroller();
+      scroller.init();
+    }, []); 
   const handleGenerateText = () => {
     if (!name || !nama) {
       setError("Nama dan nama inputan tidak boleh kosong");
@@ -119,60 +176,57 @@ const TemplatesPage = () => {
       });
   };
   return (
-    <div style={{ padding: "30px", backgroundColor: "#f5f5f5" }}>
-      <div className="min-h-screen flex flex-col items-center justify-center">
-        <header className="w-full flex justify-between items-center p-4 bg-black"></header>
-        <main className="flex-grow flex items-center justify-center w-full bg-black">
-          <div className="text-center p-8">
-            <h1 className="text-4xl font-bold text-white">TEMPLATES MUMETMENNN</h1>
-            <p className="text-lg text-gray-600">You may see a few new things ;)</p>
-          </div>
-        </main>
-      </div>
+    <div style={{ padding: "30px", marginBottom : "10px", backgroundColor: "#ffff" }}>
+      <header>
+        <div className="content">
+          <hgroup>
+            <h1>TEMPLATE</h1>
+            <i>MUMETMENTT</i>
+          </hgroup>
+        </div>
+        <div className="overlay"></div>
+      </header>
 
-      {/* Template Grid */}
-      <Grid container spacing={1} justifyContent="flex-start">
+      <Grid container spacing={1} justifyContent="flex-start" className="retest">
         {templates.map((template) => (
           <Grid item xs={12} sm={6} md={4} key={template.id}>
-  <div
-    onClick={() => handleSelectTemplate(template)} // Tetap menggunakan fungsi yang sama untuk klik
-    className="grid__item item w-56 text-white relative" // Class Tailwind CSS
-  >
-    <div
-      className="item__content w-full p-4 bg-black relative border-2 flex flex-col"
-      style={{ height: '200px' }} // Tinggi statis dengan gaya inline
-    >
-      <p
-        className="flex-grow mb-2 overflow-hidden text-ellipsis line-clamp-4"
-        style={{
-          display: '-webkit-box',
-          WebkitLineClamp: 4,
-          WebkitBoxOrient: 'vertical',
-        }}
-      >
-        {template.teks}
-      </p>
-      <a href="#">Lihat Selengkapnya</a>
-    </div>
-  </div>
-</Grid>
-
-  ))}
-</Grid>
-
-
-      {/* Drawer for generating template */}
+            <div
+              onClick={() => handleSelectTemplate(template)} 
+              className="grid__item item w-56 text-white relative " 
+            >
+                <div
+                    className="item__content items h-full w-full p-4 bg-black relative border-2 flex flex-col"
+                    style={{ height: '200px' }} 
+                >
+                    <p
+                      className="flex-grow mb-2 overflow-hidden text-ellipsis line-clamp-4"
+                      style={{
+                          height: '100px',
+                          display: '-webkit-box',
+                          WebkitLineClamp: 4,
+                          WebkitBoxOrient: 'vertical',
+                          }}
+                    >
+                        {template.teks}
+                    </p>
+                    <a href="#" >Lihat Selengkapnya</a>
+              </div>
+            </div>
+        </Grid>
+        ))}
+      </Grid>
+      
       <Drawer
-        anchor={isMobile ? "bottom" : "right"} // For mobile, open from the bottom; for desktop, open from the right
+        anchor={isMobile ? "bottom" : "right"}
         open={openDrawer}
         onClose={handleCancelDrawer}
         transitionDuration={300}
         sx={{
           "& .MuiDrawer-paper": {
-            width: isMobile ? "100%" : "50%", // Full screen on mobile, half screen on desktop
-            backgroundColor: "#333", // Dark background color
-            color: "white", // White text
-            borderRadius: isMobile ? "16px 16px 0 0" : "0", // Rounded top corners on mobile
+            width: isMobile ? "100%" : "50%", 
+            backgroundColor: "#333", 
+            color: "white", 
+            borderRadius: isMobile ? "16px 16px 0 0" : "0", 
             padding: "20px",
           },
         }}
@@ -185,40 +239,40 @@ const TemplatesPage = () => {
             width: "100%",
           }}
         >
-          {/* Static Box for Template Display */}
+
           {generatedText && (
             <div
               style={{
                 width: "100%",
-                height: "250px", // Adjusted height to fit 3x4 grid
+                height: "250px", 
                 backgroundColor: "#fff",
-                color: "#000", // Text color set to black
+                color: "#000",
                 borderRadius: "8px",
                 padding: "10px",
-                overflowX: "auto", // Enable horizontal scrolling for overflow
-                marginBottom: "20px", // Space between box and form
+                overflowX: "auto",
+                marginBottom: "20px", 
               }}
             >
               <pre style={{ whiteSpace: "pre-wrap" }}>{generatedText}</pre>
             </div>
           )}
 
-          {/* Row for "Salin Template" with white background */}
-          <div
+          <button
+            onClick={handleCopyToClipboard}
             style={{
               display: "flex",
               alignItems: "center",
-              backgroundColor: "#fff", // White background for clarity
+              backgroundColor: "#fff", 
               padding: "10px",
               borderRadius: "8px",
               width: "100%",
-              justifyContent: "flex-start", // Align items to the left
-              marginBottom: "20px", // Space between the row and form
+              justifyContent: "flex-start", 
+              marginBottom: "20px", 
             }}
+            className= "copy"
           >
             <IconButton
               color="primary"
-              onClick={handleCopyToClipboard}
               sx={{ marginRight: "10px" }}
             >
               <CopyAll />
@@ -226,14 +280,14 @@ const TemplatesPage = () => {
             <Typography variant="body2" color="textSecondary">
               Salin Template
             </Typography>
-          </div>
+          </button>
 
 <TextField
   label="Masukkan Nama yang mau diganti"
   variant="outlined"
   fullWidth
-  value={nama} // This should bind to the 'nama' state
-  onChange={(e) => setNama(e.target.value)} // This should update 'nama'
+  value={nama}
+  onChange={(e) => setNama(e.target.value)}
   margin="normal"
   error={!!error}
   helperText={error}
@@ -244,8 +298,8 @@ const TemplatesPage = () => {
   label="Masukkan Nama"
   variant="outlined"
   fullWidth
-  value={name} // This should bind to the 'name' state
-  onChange={(e) => setName(e.target.value)} // This should update 'name'
+  value={name}
+  onChange={(e) => setName(e.target.value)} 
   margin="normal"
   error={!!error}
   helperText={error}
@@ -262,10 +316,10 @@ const TemplatesPage = () => {
 </Button>
 
 
-          {/* Red Cancel Button */}
+      
           <Button
             variant="outlined"
-            color="error"  // Red color for Cancel button
+            color="error" 
             onClick={handleCancelDrawer}
             sx={{ marginTop: "10px", width: "100%" }}
           >
@@ -274,7 +328,7 @@ const TemplatesPage = () => {
         </div>
       </Drawer>
 
-      {/* Floating Action Button to open Dialog */}
+ 
       <Fab
         color="primary"
         aria-label="add-template"
@@ -289,46 +343,46 @@ const TemplatesPage = () => {
         <Add />
       </Fab>
 
-      {/* Dialog for adding new template */}
-      <Dialog open={openDialog} onClose={handleCloseDialog}>
-  <DialogTitle>Tambah Template Baru</DialogTitle>
-  <DialogContent
-    sx={{
-      display: "flex", // Flexbox for form layout
-      flexDirection: "column",
-      width: "400px", // Keep the dialog square with a fixed width
-      height: "400px", // Make the dialog square (400px x 400px)
-    }}
-  >
-    <TextField
-    autoFocus
-    margin="dense"
-    label="Template"
-    type="text"
-    fullWidth
-    value={newTemplate}
-    onChange={(e) => setNewTemplate(e.target.value)}
-    error={!!error}
-    helperText={error}
-    multiline  // Enable multi-line text field
-    rows={10}   // Default number of lines visible
-    sx={{
-        height: "100%", // Adjust height to fill the dialog
-        minHeight: "200px", // Minimum height to ensure it's large enough
-    }}
-    />
-  </DialogContent>
-  <DialogActions>
-    <Button onClick={handleCloseDialog} color="secondary">
-      Batal
-    </Button>
-    <Button onClick={handleSubmitTemplate} color="primary">
-      Kirimkan
-    </Button>
-  </DialogActions>
-</Dialog>
 
-      {/* Success Snackbar */}
+      <Dialog open={openDialog} onClose={handleCloseDialog}>
+        <DialogTitle>Tambah Template Baru</DialogTitle>
+        <DialogContent
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              width: "50vh", 
+              height: "400px", 
+            }}
+          >
+            <TextField
+            autoFocus
+            margin="dense"
+            label="Template"
+            type="text"
+            fullWidth
+            value={newTemplate}
+            onChange={(e) => setNewTemplate(e.target.value)}
+            error={!!error}
+            helperText={error}
+            multiline
+            rows={10}   
+            sx={{
+                height: "100%",
+                minHeight: "200px",
+            }}
+            />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog} color="secondary">
+            Batal
+          </Button>
+          <Button onClick={handleSubmitTemplate} color="primary">
+            Kirimkan
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+   
       <Snackbar
         open={!!successMessage}
         autoHideDuration={3000}

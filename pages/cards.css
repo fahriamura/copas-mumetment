@@ -1,25 +1,13 @@
-* {
-  box-sizing: border-box;
+
+.items:hover {
+  --expand: 1.5;
 }
 
-body {
-  min-height: 100vh;
-  display: grid;
-  place-items: center;
-  background: hsl(0, 0%, 10%);
-}
 
-.item {
-  position: relative;
-  --expand: 0; /* Nilai awal */
-}
 
-.item:hover {
-  --expand: 1; /* Nilai saat di-hover */
-}
 
-.item:before,
-.item:after {
+.items::before,
+.items::after {
   content: '';
   position: absolute;
   height: 100%;
@@ -28,17 +16,16 @@ body {
   border: 2px solid white;
   top: 0;
   left: 0;
-  z-index: -1000; /* Pastikan ini berada di bawah konten */
+  z-index: -1;
 }
 
-.item:after {
+.items::after {
   transform: translate(calc(var(--expand) * -2%), calc(var(--expand) * -2%));
-  transition: transform 0.2s ease;
+  transition: transform 0.2s;
 }
 
 .item__content {
-  position: relative;
-  transition: transform 0.2s ease;
+  transition: transform 0.2s;
   transform: translate(calc(var(--expand) * -4%), calc(var(--expand) * -4%));
 }
 
