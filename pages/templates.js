@@ -21,6 +21,8 @@ import {
   Fab,
 } from "@mui/material";
 import { CopyAll, Add } from "@mui/icons-material";
+import { makeStyles } from "@mui/styles";
+import './cards.css';
 
 const TemplatesPage = () => {
     const [templates, setTemplates] = useState([]);
@@ -116,7 +118,6 @@ const TemplatesPage = () => {
         setError("Gagal menambahkan template");
       });
   };
-
   return (
     <div style={{ padding: "30px", backgroundColor: "#f5f5f5" }}>
       <div className="min-h-screen flex flex-col items-center justify-center">
@@ -131,40 +132,31 @@ const TemplatesPage = () => {
 
       {/* Template Grid */}
       <Grid container spacing={1} justifyContent="flex-start">
-  {templates.map((template) => (
-    <Grid item xs={12} sm={6} md={4} key={template.id}>
-      <Card
-        onClick={() => handleSelectTemplate(template)}
+        {templates.map((template) => (
+          <Grid item xs={12} sm={6} md={4} key={template.id}>
+  <div
+    onClick={() => handleSelectTemplate(template)} // Tetap menggunakan fungsi yang sama untuk klik
+    className="grid__item item w-56 text-white relative" // Class Tailwind CSS
+  >
+    <div
+      className="item__content w-full p-4 bg-black relative border-2 flex flex-col"
+      style={{ height: '200px' }} // Tinggi statis dengan gaya inline
+    >
+      <p
+        className="flex-grow mb-2 overflow-hidden text-ellipsis line-clamp-4"
         style={{
-          width: "100%", // Agar card mengisi lebar grid container
-          height: "150px", // Tinggi card tetap
-          borderRadius: "16px",
-          backgroundColor: "#B0B0B0",
-          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-          transition: "transform 0.2s, box-shadow 0.2s, background-color 0.2s",
-          cursor: "pointer",
-          '&:hover': {
-            backgroundColor: "#A0A0A0",
-            boxShadow: "0 8px 16px rgba(0, 0, 0, 0.2)",
-          },
-          overflow: "hidden",
+          display: '-webkit-box',
+          WebkitLineClamp: 4,
+          WebkitBoxOrient: 'vertical',
         }}
       >
-        <CardContent>
-          <Typography
-            variant="body2"
-            style={{
-              display: "-webkit-box",
-              WebkitBoxOrient: "vertical",
-              overflow: "hidden",
-              WebkitLineClamp: 4, // Limit to 4 lines
-            }}
-          >
-            {template.teks}
-          </Typography>
-        </CardContent>
-      </Card>
-    </Grid>
+        {template.teks}
+      </p>
+      <a href="#">Lihat Selengkapnya</a>
+    </div>
+  </div>
+</Grid>
+
   ))}
 </Grid>
 
